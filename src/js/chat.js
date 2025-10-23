@@ -1,12 +1,15 @@
 import {db}from "./firebase.js";
-import {collection,addDoc, Timestamp,query,where,orderBy, onSnapshot} from "firebase/firestore";
+
+import {collection,addDoc, Timestamp,query,where,orderBy, onSnapshot,getDocs,deleteDoc,doc} from "firebase/firestore";
+
 
 export function Chatroom(room,username){
+ 
 
-        let curroom = room;
-        let curuser =username;
-        const dbRef = collection(db,'chats');
-        let unscribe =null;
+            let curroom = room;
+            let curuser =username;
+            const dbRef = collection(db,'chats');
+            let unscribe =null;
     const addChat = async (message)=>{
 
         const now =new Date();
@@ -43,8 +46,8 @@ export function Chatroom(room,username){
         //      unscribe();
         // }
 
-
         if(unscribe) unscribe();
+
 
          unscribe= onSnapshot(
                 query(dbRef,where('room','==',curroom),orderBy('created_at'))
@@ -56,12 +59,19 @@ export function Chatroom(room,username){
                         if(item.type === "added"){
                             callback(item.doc.data());
                         }
+                        if(item.type ==="removed"){
+                            const chatul = document.querySelector('.chat-ul');
+                            chatul.innerHTML = "";
+                        }
+
+                   
                     });
 
              
                 }
             );
      
+            
     }
 
     const updateChatroom = (newroom)=>{
@@ -77,5 +87,37 @@ export function Chatroom(room,username){
         console.log(`Username Changed to ${curuser}`);
     }
 
+//Delete all message every 5 s
+const deleteAllMessages=()=>{
+
+  let deleteiner= setInterval(async()=>{
+
+        try{
+
+            const getdatas = await getDocs(dbRef);
+
+            console.log(getdatas);
+            //stop function call if no data in firebase
+
+            if(getdatas.empty){
+                console.log("No message to delete");
+                clearInterval(deleteiner);             // stop the interval
+   
+
+                return;
+            }
+
+            getdatas.forEach(async(getdata)=>{
+                await deleteDoc(doc(db,'chats',getdata.id));
+            });
+
+            console.log("All message delete successfully");
+        }catch(error){
+                console.error('Error deleting message :' ,error);
+        }
+    },10000);
+}
+
+deleteAllMessages();
     return {addChat,getChats,updateChatroom,updateUsername};
 }
