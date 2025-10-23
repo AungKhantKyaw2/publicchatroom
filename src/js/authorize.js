@@ -22,16 +22,18 @@ export function Authorize(){
     const userCredential=  await createUserWithEmailAndPassword(auth, email, password)
     const user = userCredential.user;
 
-        //  console.log(user);
+         console.log(user);
 
       await  updateProfile(user,{
           displayName: fullname, photoURL:defaultprofileimg
         }).then(() => {
 
+          console.log(user);
+
           //set name to localstorage
-            setLocalName(fullname);
-                 //Redirect to profile.html
-          window.location.href="../index.html";
+            setLocalName(user);
+                // Redirect to profile.html
+          // window.location.href="../index.html";
         });
 
 
@@ -50,12 +52,12 @@ export function Authorize(){
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
 
-          // console.log(userCredential.user);
+          console.log(userCredential.user);
 
           //set name to localstorage
           setLocalName(userCredential.user);
 
-            //Redirect to profile.html
+            // Redirect to profile.html
           window.location.href="../index.html";
         })
         .catch((error) => {
@@ -109,8 +111,8 @@ export function Authorize(){
         .then((result) => {
           console.log(result);
 
-           //set name to localstorage
-           setLocalName(result.user.displayName);
+          //  set name to localstorage
+           setLocalName(result.user);
 
              //Redirect to index.html
           window.location.href="../index.html";
