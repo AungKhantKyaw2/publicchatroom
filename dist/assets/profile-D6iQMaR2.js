@@ -1,0 +1,1 @@
+import{A as o}from"./main-qpskWD1a.js";import{U as t}from"./uielement-CvlB9Ql_.js";const n=document.getElementById("userinfo"),s=document.getElementById("logoutbtn"),r=o(),u=t(n);r.getUser(e=>{console.log(e),u.userInfoEle(e)});s.addEventListener("click",()=>{const{logoutuser:e}=o();e()});
